@@ -4,7 +4,7 @@
 
 // ─── User & Authentication ───────────────────────────────────
 
-export type UserRole = 'customer' | 'worker' | 'admin';
+export type UserRole = "customer" | "worker" | "admin";
 
 export interface User {
   id: string;
@@ -70,7 +70,7 @@ export interface Service {
 
 // ─── Worker ──────────────────────────────────────────────────
 
-export type VerificationStatus = 'pending' | 'verified' | 'rejected';
+export type VerificationStatus = "pending" | "verified" | "rejected";
 
 export interface WorkerSkill {
   id: string;
@@ -85,8 +85,8 @@ export interface Worker {
   user: User;
   cooperativeId: string;
   cooperative?: Cooperative;
-  experience: number;           // years
-  rating: number;               // 0-5
+  experience: number; // years
+  rating: number; // 0-5
   totalRatings: number;
   availability: boolean;
   location: string;
@@ -97,17 +97,20 @@ export interface Worker {
   activeJobs: number;
   completedJobs: number;
   earnings: number;
+  schedule?: { day: string; enabled: boolean; shift: string }[];
+  serviceRadiusKm?: number;
+  emergencyAvailable?: boolean;
 }
 
 // ─── Booking ─────────────────────────────────────────────────
 
 export type BookingStatus =
-  | 'pending'
-  | 'worker_assigned'
-  | 'accepted'
-  | 'in_progress'
-  | 'completed'
-  | 'cancelled';
+  | "pending"
+  | "worker_assigned"
+  | "accepted"
+  | "in_progress"
+  | "completed"
+  | "cancelled";
 
 export interface Booking {
   id: string;
@@ -121,8 +124,8 @@ export interface Booking {
   location: string;
   latitude?: number;
   longitude?: number;
-  preferredDate: string;        // ISO date
-  preferredTime: string;        // HH:mm
+  preferredDate: string; // ISO date
+  preferredTime: string; // HH:mm
   emergency: boolean;
   status: BookingStatus;
   notes?: string;
@@ -190,13 +193,13 @@ export interface SubmitRatingPayload {
 
 // ─── Complaint ───────────────────────────────────────────────
 
-export type ComplaintStatus = 'open' | 'under_review' | 'resolved';
+export type ComplaintStatus = "open" | "under_review" | "resolved";
 export type ComplaintCategory =
-  | 'worker_no_show'
-  | 'poor_service'
-  | 'overcharging'
-  | 'behaviour_issue'
-  | 'other';
+  | "worker_no_show"
+  | "poor_service"
+  | "overcharging"
+  | "behaviour_issue"
+  | "other";
 
 export interface Complaint {
   id: string;
@@ -206,6 +209,7 @@ export interface Complaint {
   customer?: User;
   category: ComplaintCategory;
   description: string;
+  photos?: string[];
   status: ComplaintStatus;
   resolutionNote?: string;
   createdAt: string;
@@ -216,12 +220,13 @@ export interface SubmitComplaintPayload {
   bookingId: string;
   category: ComplaintCategory;
   description: string;
+  photos?: string[];
 }
 
 // ─── Payment ─────────────────────────────────────────────────
 
-export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
-export type PaymentMethod = 'cash' | 'card' | 'upi' | 'bank_transfer';
+export type PaymentStatus = "pending" | "paid" | "failed" | "refunded";
+export type PaymentMethod = "cash" | "card" | "upi" | "bank_transfer";
 
 export interface Payment {
   id: string;
@@ -235,15 +240,15 @@ export interface Payment {
 // ─── Notification ────────────────────────────────────────────
 
 export type NotificationType =
-  | 'new_job_request'
-  | 'worker_assigned'
-  | 'booking_accepted'
-  | 'booking_cancelled'
-  | 'job_in_progress'
-  | 'service_completed'
-  | 'new_review'
-  | 'complaint_update'
-  | 'verification_update';
+  | "new_job_request"
+  | "worker_assigned"
+  | "booking_accepted"
+  | "booking_cancelled"
+  | "job_in_progress"
+  | "service_completed"
+  | "new_review"
+  | "complaint_update"
+  | "verification_update";
 
 export interface AppNotification {
   id: string;

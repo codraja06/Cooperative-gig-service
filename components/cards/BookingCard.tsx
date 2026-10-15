@@ -2,13 +2,21 @@
 // CoopConnect – Booking Status Card Component
 // ============================================================
 
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Calendar, Clock, MapPin, Zap } from 'lucide-react-native';
-import { format } from 'date-fns';
-import { Colors, Radius, Shadows, Spacing, Typography, BOOKING_STATUS_LABELS, BOOKING_STATUS_COLORS } from '@/constants';
-import type { Booking } from '@/types';
-import { Avatar, StarRating } from '@/components/common/UIKit';
+import { Avatar, StarRating } from "@/components/common/UIKit";
+import {
+  BOOKING_STATUS_COLORS,
+  BOOKING_STATUS_LABELS,
+  Colors,
+  Radius,
+  Shadows,
+  Spacing,
+  Typography,
+} from "@/constants";
+import type { Booking } from "@/types";
+import { format } from "date-fns";
+import { Calendar, Clock, MapPin, Zap } from "lucide-react-native";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface BookingCardProps {
   booking: Booking;
@@ -16,25 +24,34 @@ interface BookingCardProps {
   compact?: boolean;
 }
 
-export function BookingCard({ booking, onPress, compact = false }: BookingCardProps) {
-  const statusColor = BOOKING_STATUS_COLORS[booking.status] || Colors.textSecondary;
+export function BookingCard({
+  booking,
+  onPress,
+  compact = false,
+}: BookingCardProps) {
+  const statusColor =
+    BOOKING_STATUS_COLORS[booking.status] || Colors.textSecondary;
   const statusLabel = BOOKING_STATUS_LABELS[booking.status] || booking.status;
 
   const formattedDate = (() => {
     try {
-      return format(new Date(booking.preferredDate), 'dd MMM yyyy');
+      return format(new Date(booking.preferredDate), "dd MMM yyyy");
     } catch {
       return booking.preferredDate;
     }
   })();
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={onPress}
+      activeOpacity={0.85}
+    >
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.serviceInfo}>
           <Text style={styles.serviceName} numberOfLines={1}>
-            {booking.service?.name ?? 'Service'}
+            {booking.service?.name ?? "Service"}
           </Text>
           <Text style={styles.bookingId} numberOfLines={1}>
             #{booking.id.slice(-6).toUpperCase()}
@@ -47,9 +64,18 @@ export function BookingCard({ booking, onPress, compact = false }: BookingCardPr
               <Text style={styles.emergencyText}>URGENT</Text>
             </View>
           )}
-          <View style={[styles.statusBadge, { backgroundColor: `${statusColor}18` }]}>
-            <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
-            <Text style={[styles.statusText, { color: statusColor }]}>{statusLabel}</Text>
+          <View
+            style={[
+              styles.statusBadge,
+              { backgroundColor: `${statusColor}18` },
+            ]}
+          >
+            <View
+              style={[styles.statusDot, { backgroundColor: statusColor }]}
+            />
+            <Text style={[styles.statusText, { color: statusColor }]}>
+              {statusLabel}
+            </Text>
           </View>
         </View>
       </View>
@@ -74,9 +100,7 @@ export function BookingCard({ booking, onPress, compact = false }: BookingCardPr
         {!compact && (
           <View style={styles.metaItem}>
             <MapPin size={13} color={Colors.textSecondary} />
-            <Text style={styles.metaText} numberOfLines={1}>
-              {booking.location.split(',')[0]}
-            </Text>
+            <Text style={styles.metaText}>{booking.location}</Text>
           </View>
         )}
       </View>
@@ -104,13 +128,17 @@ const styles = StyleSheet.create({
     ...Shadows.md,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexWrap: "wrap",
+    rowGap: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: Spacing.sm,
   },
-  serviceInfo: { flex: 1, marginRight: Spacing.sm },
+  serviceInfo: { flex: 1, minWidth: 110, marginRight: Spacing.sm },
   serviceName: {
+    flexShrink: 1,
+    minWidth: 0,
     fontSize: Typography.fontSize.md,
     fontWeight: Typography.fontWeight.bold,
     color: Colors.textPrimary,
@@ -121,13 +149,15 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   statusRow: {
-    flexDirection: 'row',
+    flexWrap: "wrap",
+    rowGap: 8,
+    flexDirection: "row",
     gap: Spacing.xs,
-    alignItems: 'center',
+    alignItems: "center",
   },
   emergencyBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 3,
     backgroundColor: Colors.emergencyLight,
     paddingHorizontal: 6,
@@ -140,8 +170,8 @@ const styles = StyleSheet.create({
     color: Colors.emergency,
   },
   statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: Radius.full,
@@ -159,23 +189,26 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   meta: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: Spacing.md,
     marginBottom: Spacing.sm,
   },
   metaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    maxWidth: "100%",
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
   },
   metaText: {
+    flexShrink: 1,
+    minWidth: 0,
     fontSize: Typography.fontSize.xs,
     color: Colors.textSecondary,
   },
   workerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.sm,
     paddingTop: Spacing.sm,
     borderTopWidth: 1,
@@ -183,6 +216,8 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xs,
   },
   workerName: {
+    flexShrink: 1,
+    minWidth: 0,
     fontSize: Typography.fontSize.sm,
     fontWeight: Typography.fontWeight.semiBold,
     color: Colors.textPrimary,

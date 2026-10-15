@@ -4,14 +4,21 @@
 // All scoring is deterministic and explainable.
 // ============================================================
 
-import type { Worker, Booking, MatchScoreBreakdown, WorkerMatch } from '@/types';
-import { MATCHING_WEIGHTS } from '@/constants';
+import { MATCHING_WEIGHTS } from "@/constants";
+import type {
+  Booking,
+  MatchScoreBreakdown,
+  Worker,
+  WorkerMatch,
+} from "@/types";
 
 // ─── Haversine Distance ──────────────────────────────────────
 
 function haversineKm(
-  lat1: number, lon1: number,
-  lat2: number, lon2: number,
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number,
 ): number {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -67,13 +74,20 @@ function calcProximityScore(
   bookingLon?: number,
 ): { score: number; distanceKm?: number } {
   if (
-    bookingLat === undefined || bookingLon === undefined ||
-    worker.latitude === undefined || worker.longitude === undefined
+    bookingLat === undefined ||
+    bookingLon === undefined ||
+    worker.latitude === undefined ||
+    worker.longitude === undefined
   ) {
     return { score: MATCHING_WEIGHTS.proximity * 0.5 }; // midpoint when coords unavailable
   }
 
-  const km = haversineKm(worker.latitude, worker.longitude, bookingLat, bookingLon);
+  const km = haversineKm(
+    worker.latitude,
+    worker.longitude,
+    bookingLat,
+    bookingLon,
+  );
   const MAX_KM = 30;
   const normalised = Math.max(0, 1 - km / MAX_KM);
   return {
@@ -103,15 +117,18 @@ export function checkEligibility(
   worker: Worker,
   serviceId: string,
 ): EligibilityResult {
-  if (worker.verificationStatus !== 'verified') {
-    return { eligible: false, reason: 'Worker is not verified' };
+  if (worker.verificationStatus !== "verified") {
+    return { eligible: false, reason: "Worker is not verified" };
   }
   if (!worker.availability) {
-    return { eligible: false, reason: 'Worker is not available' };
+    return { eligible: false, reason: "Worker is not available" };
   }
   const hasSkill = worker.skills.some((s) => s.serviceId === serviceId);
   if (!hasSkill) {
-    return { eligible: false, reason: 'Worker does not have the required skill' };
+    return {
+      eligible: false,
+      reason: "Worker does not have the required skill",
+    };
   }
   return { eligible: true };
 }
@@ -119,7 +136,7 @@ export function checkEligibility(
 // ─── Core Matching Function ──────────────────────────────────
 
 export function matchWorkers(
-  booking: Pick<Booking, 'serviceId' | 'latitude' | 'longitude'>,
+  booking: Pick<Booking, "serviceId" | "latitude" | "longitude">,
   workers: Worker[],
 ): WorkerMatch[] {
   const results: WorkerMatch[] = [];
@@ -133,14 +150,22 @@ export function matchWorkers(
     const ratingScore = calcRatingScore(worker);
     const experienceScore = calcExperienceScore(worker);
     const { score: proximityScore, distanceKm } = calcProximityScore(
-      worker, booking.latitude, booking.longitude,
+      worker,
+      booking.latitude,
+      booking.longitude,
     );
     const workloadScore = calcWorkloadScore(worker);
 
     const total = Math.min(
       100,
       Math.round(
-        (skillScore + availabilityScore + ratingScore + experienceScore + proximityScore + workloadScore) * 10,
+        (skillScore +
+          availabilityScore +
+          ratingScore +
+          experienceScore +
+          proximityScore +
+          workloadScore) *
+          10,
       ) / 10,
     );
 
@@ -160,7 +185,8 @@ export function matchWorkers(
   // Sort: higher score first. Tiebreak: more experience, then lower workload.
   results.sort((a, b) => {
     if (b.score !== a.score) return b.score - a.score;
-    if (b.worker.experience !== a.worker.experience) return b.worker.experience - a.worker.experience;
+    if (b.worker.experience !== a.worker.experience)
+      return b.worker.experience - a.worker.experience;
     return a.worker.activeJobs - b.worker.activeJobs;
   });
 
@@ -185,9 +211,13 @@ export function applyFairnessAdjustment(matches: WorkerMatch[]): WorkerMatch[] {
   return matches
     .map((m) => {
       const penalty =
-        (Math.min(m.worker.activeJobs, MAX_ACTIVE_FOR_PENALTY) / MAX_ACTIVE_FOR_PENALTY) *
+        (Math.min(m.worker.activeJobs, MAX_ACTIVE_FOR_PENALTY) /
+          MAX_ACTIVE_FOR_PENALTY) *
         MAX_PENALTY_POINTS;
-      const adjustedScore = Math.max(0, Math.round((m.score - penalty) * 10) / 10);
+      const adjustedScore = Math.max(
+        0,
+        Math.round((m.score - penalty) * 10) / 10,
+      );
       return { ...m, score: adjustedScore };
     })
     .sort((a, b) => {

@@ -2,14 +2,18 @@
 // CoopConnect – Worker Card Component
 // ============================================================
 
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Avatar, Badge, StarRating } from "@/components/common/UIKit";
+import { Colors, Radius, Shadows, Spacing, Typography } from "@/constants";
+import type { Worker, WorkerMatch } from "@/types";
 import {
-  CheckCircle, Clock, XCircle, Briefcase, MapPin, Star,
-} from 'lucide-react-native';
-import { Colors, Radius, Shadows, Spacing, Typography } from '@/constants';
-import type { Worker, WorkerMatch } from '@/types';
-import { Avatar, StarRating, Badge } from '@/components/common/UIKit';
+  Briefcase,
+  CheckCircle,
+  Clock,
+  MapPin,
+  XCircle,
+} from "lucide-react-native";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 // ─── Worker List Card ────────────────────────────────────────
 
@@ -27,27 +31,42 @@ export function WorkerCard({ worker, onPress, match }: WorkerCardProps) {
   }[worker.verificationStatus];
 
   const vIcon = {
-    verified: <CheckCircle size={13} color={Colors.success} fill={Colors.success} />,
+    verified: (
+      <CheckCircle size={13} color={Colors.success} fill={Colors.success} />
+    ),
     pending: <Clock size={13} color={Colors.warning} />,
     rejected: <XCircle size={13} color={Colors.error} />,
   }[worker.verificationStatus];
 
   const vLabel = {
-    verified: 'Verified',
-    pending: 'Pending',
-    rejected: 'Rejected',
+    verified: "Verified",
+    pending: "Pending",
+    rejected: "Rejected",
   }[worker.verificationStatus];
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={onPress}
+      activeOpacity={0.85}
+    >
       <View style={styles.row}>
         <Avatar name={worker.user.name} size={52} />
         <View style={styles.info}>
           <View style={styles.nameRow}>
-            <Text style={styles.name} numberOfLines={1}>{worker.user.name}</Text>
-            <View style={[styles.verificationBadge, { backgroundColor: `${vColor}18` }]}>
+            <Text style={styles.name} numberOfLines={1}>
+              {worker.user.name}
+            </Text>
+            <View
+              style={[
+                styles.verificationBadge,
+                { backgroundColor: `${vColor}18` },
+              ]}
+            >
               {vIcon}
-              <Text style={[styles.verificationText, { color: vColor }]}>{vLabel}</Text>
+              <Text style={[styles.verificationText, { color: vColor }]}>
+                {vLabel}
+              </Text>
             </View>
           </View>
 
@@ -56,7 +75,11 @@ export function WorkerCard({ worker, onPress, match }: WorkerCardProps) {
               <Badge key={s.id} label={s.serviceName} variant="primary" small />
             ))}
             {worker.skills.length > 2 && (
-              <Badge label={`+${worker.skills.length - 2}`} variant="neutral" small />
+              <Badge
+                label={`+${worker.skills.length - 2}`}
+                variant="neutral"
+                small
+              />
             )}
           </View>
 
@@ -68,7 +91,9 @@ export function WorkerCard({ worker, onPress, match }: WorkerCardProps) {
             </View>
             <View style={styles.metaItem}>
               <MapPin size={12} color={Colors.textSecondary} />
-              <Text style={styles.metaText} numberOfLines={1}>{worker.location.split(',')[0]}</Text>
+              <Text style={styles.metaText} numberOfLines={1}>
+                {worker.location.split(",")[0]}
+              </Text>
             </View>
           </View>
         </View>
@@ -89,17 +114,27 @@ export function WorkerCard({ worker, onPress, match }: WorkerCardProps) {
 
       {/* Availability */}
       <View style={styles.availRow}>
-        <View style={[
-          styles.availDot,
-          { backgroundColor: worker.availability ? Colors.success : Colors.error },
-        ]} />
-        <Text style={[
-          styles.availText,
-          { color: worker.availability ? Colors.success : Colors.error },
-        ]}>
-          {worker.availability ? 'Available' : 'Unavailable'}
+        <View
+          style={[
+            styles.availDot,
+            {
+              backgroundColor: worker.availability
+                ? Colors.success
+                : Colors.error,
+            },
+          ]}
+        />
+        <Text
+          style={[
+            styles.availText,
+            { color: worker.availability ? Colors.success : Colors.error },
+          ]}
+        >
+          {worker.availability ? "Available" : "Unavailable"}
         </Text>
-        <Text style={styles.jobsText}>{worker.activeJobs} active · {worker.completedJobs} done</Text>
+        <Text style={styles.jobsText}>
+          {worker.activeJobs} active · {worker.completedJobs} done
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -122,9 +157,11 @@ export function WorkerRow({ worker, onPress, right }: WorkerRowProps) {
     >
       <Avatar name={worker.user.name} size={40} />
       <View style={styles.rowInfo}>
-        <Text style={styles.rowName} numberOfLines={1}>{worker.user.name}</Text>
+        <Text style={styles.rowName} numberOfLines={1}>
+          {worker.user.name}
+        </Text>
         <Text style={styles.rowSubtext} numberOfLines={1}>
-          {worker.skills.map((s) => s.serviceName).join(', ')}
+          {worker.skills.map((s) => s.serviceName).join(", ")}
         </Text>
       </View>
       {right}
@@ -141,9 +178,16 @@ const styles = StyleSheet.create({
     ...Shadows.md,
     gap: Spacing.sm,
   },
-  row: { flexDirection: 'row', gap: Spacing.md, alignItems: 'flex-start' },
+  row: { flexDirection: "row", gap: Spacing.md, alignItems: "flex-start" },
   info: { flex: 1, gap: 6 },
-  nameRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: Spacing.xs },
+  nameRow: {
+    flexWrap: "wrap",
+    rowGap: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: Spacing.xs,
+  },
   name: {
     fontSize: Typography.fontSize.md,
     fontWeight: Typography.fontWeight.bold,
@@ -151,8 +195,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   verificationBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 3,
     paddingHorizontal: 6,
     paddingVertical: 2,
@@ -162,13 +206,23 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: Typography.fontWeight.semiBold,
   },
-  skillsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 4 },
-  metaRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: Spacing.md },
-  metaItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  metaText: { fontSize: Typography.fontSize.xs, color: Colors.textSecondary },
+  skillsRow: { flexDirection: "row", flexWrap: "wrap", gap: 4 },
+  metaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: Spacing.md,
+  },
+  metaItem: { flexDirection: "row", alignItems: "center", gap: 4 },
+  metaText: {
+    flexShrink: 1,
+    minWidth: 0,
+    fontSize: Typography.fontSize.xs,
+    color: Colors.textSecondary,
+  },
   matchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.sm,
     paddingTop: Spacing.sm,
     borderTopWidth: 1,
@@ -179,10 +233,10 @@ const styles = StyleSheet.create({
     height: 4,
     backgroundColor: Colors.border,
     borderRadius: 2,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   scoreBarFill: {
-    height: '100%',
+    height: "100%",
     backgroundColor: Colors.secondary,
     borderRadius: 2,
   },
@@ -191,24 +245,27 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.bold,
     color: Colors.secondary,
     minWidth: 60,
-    textAlign: 'right',
+    textAlign: "right",
   },
   distanceText: {
     fontSize: Typography.fontSize.xs,
     color: Colors.textSecondary,
   },
-  availRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  availRow: { flexDirection: "row", alignItems: "center", gap: 6 },
   availDot: { width: 7, height: 7, borderRadius: 4 },
-  availText: { fontSize: Typography.fontSize.xs, fontWeight: Typography.fontWeight.semiBold },
+  availText: {
+    fontSize: Typography.fontSize.xs,
+    fontWeight: Typography.fontWeight.semiBold,
+  },
   jobsText: {
     fontSize: Typography.fontSize.xs,
     color: Colors.textSecondary,
-    marginLeft: 'auto',
+    marginLeft: "auto",
   },
   // Row styles
   rowContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.md,
     padding: Spacing.md,
     backgroundColor: Colors.cardBackground,

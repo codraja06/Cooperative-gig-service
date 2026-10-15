@@ -2,14 +2,20 @@
 // CoopConnect – Reusable Button Component
 // ============================================================
 
-import React from 'react';
+import { Colors, Radius, Spacing, Typography } from "@/constants";
+import React from "react";
 import {
-  TouchableOpacity, Text, ActivityIndicator, StyleSheet, ViewStyle, TextStyle,
-} from 'react-native';
-import { Colors, Radius, Spacing, Typography } from '@/constants';
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  ViewStyle,
+} from "react-native";
 
-type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success';
-type Size = 'sm' | 'md' | 'lg';
+type Variant =
+  "primary" | "secondary" | "outline" | "ghost" | "danger" | "success";
+type Size = "sm" | "md" | "lg";
 
 export interface ButtonProps {
   onPress: () => void;
@@ -26,18 +32,26 @@ export interface ButtonProps {
 }
 
 export function Button({
-  onPress, label, title, variant = 'primary', size = 'md',
-  loading = false, disabled = false, fullWidth = false,
-  style, textStyle, leftIcon,
+  onPress,
+  label,
+  title,
+  variant = "primary",
+  size = "md",
+  loading = false,
+  disabled = false,
+  fullWidth = false,
+  style,
+  textStyle,
+  leftIcon,
 }: ButtonProps) {
-  const displayText = title ?? label ?? '';
+  const displayText = title ?? label ?? "";
   const isDisabled = disabled || loading;
 
   const containerStyles: (ViewStyle | undefined)[] = [
     styles.base,
     styles[variant],
     styles[`size_${size}`] as ViewStyle,
-    fullWidth ? { alignSelf: 'stretch' } : undefined,
+    fullWidth ? { alignSelf: "stretch" } : undefined,
     isDisabled ? styles.disabled : undefined,
     style,
   ];
@@ -51,6 +65,9 @@ export function Button({
 
   return (
     <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityLabel={displayText}
+      accessibilityState={{ disabled: isDisabled, busy: loading }}
       onPress={onPress}
       disabled={isDisabled}
       style={containerStyles as any}
@@ -59,7 +76,11 @@ export function Button({
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={variant === 'outline' || variant === 'ghost' ? Colors.primary : Colors.textInverse}
+          color={
+            variant === "outline" || variant === "ghost"
+              ? Colors.primary
+              : Colors.textInverse
+          }
         />
       ) : (
         <>
@@ -73,10 +94,13 @@ export function Button({
 
 const styles = StyleSheet.create({
   base: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: Radius.md,
+    maxWidth: "100%",
+    minWidth: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: Radius.base,
+    minHeight: 46,
     gap: Spacing.xs,
   },
   // Variants
@@ -87,12 +111,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
   },
   outline: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderWidth: 1.5,
     borderColor: Colors.primary,
   },
   ghost: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   danger: {
     backgroundColor: Colors.error,
@@ -104,13 +128,18 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   // Sizes
-  size_sm: { paddingVertical: Spacing.xs, paddingHorizontal: Spacing.md, borderRadius: Radius.sm },
+  size_sm: {
+    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.md,
+    borderRadius: Radius.sm,
+  },
   size_md: { paddingVertical: 11, paddingHorizontal: Spacing.lg },
   size_lg: { paddingVertical: Spacing.md, paddingHorizontal: Spacing.xl },
   // Labels
   label: {
+    flexShrink: 1,
     fontWeight: Typography.fontWeight.semiBold,
-    textAlign: 'center',
+    textAlign: "center",
   },
   label_primary: { color: Colors.textInverse },
   label_secondary: { color: Colors.textInverse },

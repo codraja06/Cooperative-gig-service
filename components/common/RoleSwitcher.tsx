@@ -1,22 +1,35 @@
+import { Alert } from "@/components/common/Feedback";
 // ============================================================
 // CoopConnect – Role Switcher Modal & Buttons
 // Allows quick testing and switching between Customer, Worker,
 // and Cooperative Administrator accounts.
 // ============================================================
 
-import React, { useState } from 'react';
+import { Colors, Radius, Shadows, Spacing, Typography } from "@/constants";
+import { useAuth } from "@/contexts/AuthContext";
+import type { UserRole } from "@/types";
+import { useRouter } from "expo-router";
 import {
-  View, Text, StyleSheet, TouchableOpacity, Modal,
-  Platform, Alert, ActivityIndicator,
-} from 'react-native';
-import { useRouter } from 'expo-router';
+  Briefcase,
+  Check,
+  ChevronDown,
+  LogOut,
+  RefreshCw,
+  Shield,
+  Users,
+  X,
+} from "lucide-react-native";
+import React, { useState } from "react";
 import {
-  Users, Briefcase, Shield, Check, X,
-  LogOut, RefreshCw, ChevronDown,
-} from 'lucide-react-native';
-import { Colors, Spacing, Typography, Radius, Shadows } from '@/constants';
-import { useAuth } from '@/contexts/AuthContext';
-import type { UserRole } from '@/types';
+  ActivityIndicator,
+  Modal,
+  ScrollView,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface RoleOption {
   role: UserRole;
@@ -31,33 +44,33 @@ interface RoleOption {
 
 const ROLES: RoleOption[] = [
   {
-    role: 'customer',
-    name: 'Customer Account',
-    email: 'customer@coopconnect.in',
-    persona: 'Arjun Sharma · Book services & reviews',
-    route: '/(customer)',
-    color: '#0D9488',
-    bgColor: '#CCFBF1',
+    role: "customer",
+    name: "Customer Account",
+    email: "customer@coopconnect.in",
+    persona: "Arjun Sharma · Book services & reviews",
+    route: "/(customer)",
+    color: "#0D9488",
+    bgColor: "#CCFBF1",
     icon: (s, c) => <Users size={s} color={c} />,
   },
   {
-    role: 'worker',
-    name: 'Skilled Worker',
-    email: 'worker@coopconnect.in',
-    persona: 'Ravi Kumar · Jobs, schedule & earnings',
-    route: '/(worker)',
-    color: '#059669',
-    bgColor: '#D1FAE5',
+    role: "worker",
+    name: "Skilled Worker",
+    email: "worker@coopconnect.in",
+    persona: "Ravi Kumar · Jobs, schedule & earnings",
+    route: "/(worker)",
+    color: "#059669",
+    bgColor: "#D1FAE5",
     icon: (s, c) => <Briefcase size={s} color={c} />,
   },
   {
-    role: 'admin',
-    name: 'Cooperative Admin',
-    email: 'admin@coopconnect.in',
-    persona: 'Kavya Reddy · Verify workers & complaints',
-    route: '/(admin)',
-    color: '#4F46E5',
-    bgColor: '#EEF2FF',
+    role: "admin",
+    name: "Cooperative Admin",
+    email: "admin@coopconnect.in",
+    persona: "Kavya Reddy · Verify workers & complaints",
+    route: "/(admin)",
+    color: "#4F46E5",
+    bgColor: "#EEF2FF",
     icon: (s, c) => <Shield size={s} color={c} />,
   },
 ];
@@ -84,11 +97,11 @@ export function RoleSwitcherModal({
       onClose();
       router.replace(target.route as any);
     } catch (err: any) {
-      console.error('Failed to switch role:', err);
-      if (Platform.OS === 'web') {
-        window.alert(err.message || 'Failed to switch role');
+      console.error("Failed to switch role:", err);
+      if (Platform.OS === "web") {
+        window.alert(err.message || "Failed to switch role");
       } else {
-        Alert.alert('Error', err.message || 'Failed to switch role');
+        Alert.alert("Error", err.message || "Failed to switch role");
       }
     } finally {
       setSwitchingRole(null);
@@ -100,20 +113,23 @@ export function RoleSwitcherModal({
       try {
         await logout();
         onClose();
-        router.replace('/');
+        router.replace("/");
       } catch (err) {
-        console.error('Logout error:', err);
+        console.error("Logout error:", err);
       }
     };
 
-    if (Platform.OS === 'web') {
-      if (typeof window !== 'undefined' && window.confirm('Are you sure you want to sign out?')) {
+    if (Platform.OS === "web") {
+      if (
+        typeof window !== "undefined" &&
+        window.confirm("Are you sure you want to sign out?")
+      ) {
         await doLogout();
       }
     } else {
-      Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign Out', style: 'destructive', onPress: doLogout },
+      Alert.alert("Sign Out", "Are you sure you want to sign out?", [
+        { text: "Cancel", style: "cancel" },
+        { text: "Sign Out", style: "destructive", onPress: doLogout },
       ]);
     }
   };
@@ -126,14 +142,24 @@ export function RoleSwitcherModal({
       onRequestClose={onClose}
     >
       <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
+        <ScrollView
+          style={styles.modalContent}
+          contentContainerStyle={{ padding: 20 }}
+          keyboardShouldPersistTaps="handled"
+        >
           {/* Header */}
           <View style={styles.modalHeader}>
             <View>
               <Text style={styles.modalTitle}>Switch Account / Role</Text>
-              <Text style={styles.modalSubtitle}>Test all 3 roles in CoopConnect</Text>
+              <Text style={styles.modalSubtitle}>
+                Test all 3 roles in CoopConnect
+              </Text>
             </View>
-            <TouchableOpacity onPress={onClose} style={styles.closeBtn} activeOpacity={0.7}>
+            <TouchableOpacity
+              onPress={onClose}
+              style={styles.closeBtn}
+              activeOpacity={0.7}
+            >
               <X size={20} color={Colors.textSecondary} />
             </TouchableOpacity>
           </View>
@@ -149,13 +175,18 @@ export function RoleSwitcherModal({
                   key={r.role}
                   style={[
                     styles.roleCard,
-                    isCurrent && { borderColor: r.color, backgroundColor: r.bgColor + '40' },
+                    isCurrent && {
+                      borderColor: r.color,
+                      backgroundColor: r.bgColor + "40",
+                    },
                   ]}
                   onPress={() => handleSelectRole(r)}
                   disabled={switchingRole !== null}
                   activeOpacity={0.8}
                 >
-                  <View style={[styles.roleIcon, { backgroundColor: r.bgColor }]}>
+                  <View
+                    style={[styles.roleIcon, { backgroundColor: r.bgColor }]}
+                  >
                     {r.icon(22, r.color)}
                   </View>
 
@@ -163,7 +194,12 @@ export function RoleSwitcherModal({
                     <View style={styles.roleTitleRow}>
                       <Text style={styles.roleName}>{r.name}</Text>
                       {isCurrent && (
-                        <View style={[styles.activeBadge, { backgroundColor: r.color }]}>
+                        <View
+                          style={[
+                            styles.activeBadge,
+                            { backgroundColor: r.color },
+                          ]}
+                        >
                           <Text style={styles.activeBadgeText}>ACTIVE</Text>
                         </View>
                       )}
@@ -178,7 +214,9 @@ export function RoleSwitcherModal({
                     ) : isCurrent ? (
                       <Check size={20} color={r.color} />
                     ) : (
-                      <Text style={[styles.switchLink, { color: r.color }]}>Switch</Text>
+                      <Text style={[styles.switchLink, { color: r.color }]}>
+                        Switch
+                      </Text>
                     )}
                   </View>
                 </TouchableOpacity>
@@ -195,7 +233,7 @@ export function RoleSwitcherModal({
             <LogOut size={18} color={Colors.error} />
             <Text style={styles.signOutText}>Sign Out to Welcome Screen</Text>
           </TouchableOpacity>
-        </View>
+        </ScrollView>
       </View>
     </Modal>
   );
@@ -213,14 +251,14 @@ export function RoleSwitcherButton() {
   return (
     <>
       <TouchableOpacity
-        style={[styles.pillButton, { borderColor: currentRole.color + '60' }]}
+        style={[styles.pillButton, { borderColor: currentRole.color + "60" }]}
         onPress={() => setModalOpen(true)}
         activeOpacity={0.8}
       >
-        <View style={[styles.pillDot, { backgroundColor: currentRole.color }]} />
-        <Text style={styles.pillText}>
-          {currentRole.name.split(' ')[0]}
-        </Text>
+        <View
+          style={[styles.pillDot, { backgroundColor: currentRole.color }]}
+        />
+        <Text style={styles.pillText}>{currentRole.name.split(" ")[0]}</Text>
         <ChevronDown size={14} color={Colors.textSecondary} />
       </TouchableOpacity>
 
@@ -241,7 +279,10 @@ export function RoleSwitcherCard() {
   const router = useRouter();
   const [loadingRole, setLoadingRole] = useState<UserRole | null>(null);
 
-  const handleQuickSwitch = async (targetRole: UserRole, targetRoute: string) => {
+  const handleQuickSwitch = async (
+    targetRole: UserRole,
+    targetRoute: string,
+  ) => {
     if (user?.role === targetRole) return;
     setLoadingRole(targetRole);
     try {
@@ -281,24 +322,30 @@ export function RoleSwitcherCard() {
               activeOpacity={0.85}
             >
               {isLoading ? (
-                <ActivityIndicator size="small" color={isCurrent ? '#fff' : r.color} />
+                <ActivityIndicator
+                  size="small"
+                  color={isCurrent ? "#fff" : r.color}
+                />
               ) : (
-                r.icon(16, isCurrent ? '#FFFFFF' : r.color)
+                r.icon(16, isCurrent ? "#FFFFFF" : r.color)
               )}
               <Text
                 style={[
                   styles.quickBtnText,
-                  isCurrent && { color: '#FFFFFF', fontWeight: 'bold' },
+                  isCurrent && { color: "#FFFFFF", fontWeight: "bold" },
                 ]}
               >
-                {r.name.split(' ')[0]} {isCurrent ? '✓' : ''}
+                {r.name.split(" ")[0]} {isCurrent ? "✓" : ""}
               </Text>
             </TouchableOpacity>
           );
         })}
       </View>
 
-      <RoleSwitcherModal visible={modalOpen} onClose={() => setModalOpen(false)} />
+      <RoleSwitcherModal
+        visible={modalOpen}
+        onClose={() => setModalOpen(false)}
+      />
     </View>
   );
 }
@@ -306,26 +353,29 @@ export function RoleSwitcherCard() {
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
     padding: Spacing.base,
   },
   modalContent: {
+    maxHeight: "90%",
+    flexGrow: 0,
     backgroundColor: Colors.cardBackground,
     borderRadius: Radius.xl,
-    padding: Spacing.lg,
-    width: '100%',
+    width: "100%",
     maxWidth: 440,
     ...Shadows.lg,
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: Spacing.base,
   },
   modalTitle: {
+    flexShrink: 1,
+    minWidth: 0,
     fontSize: Typography.fontSize.xl,
     fontWeight: Typography.fontWeight.bold,
     color: Colors.textPrimary,
@@ -345,8 +395,8 @@ const styles = StyleSheet.create({
     marginVertical: Spacing.sm,
   },
   roleCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: Spacing.md,
     borderRadius: Radius.lg,
     backgroundColor: Colors.background,
@@ -358,15 +408,15 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: Radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   roleInfo: {
     flex: 1,
   },
   roleTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.xs,
   },
   roleName: {
@@ -381,8 +431,8 @@ const styles = StyleSheet.create({
   },
   activeBadgeText: {
     fontSize: 9,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontWeight: "700",
+    color: "#FFFFFF",
     letterSpacing: 0.5,
   },
   rolePersona: {
@@ -394,11 +444,11 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.xs,
     color: Colors.textMuted,
     marginTop: 1,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
   },
   actionCol: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingLeft: Spacing.xs,
   },
   switchLink: {
@@ -406,9 +456,9 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.bold,
   },
   signOutRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: Spacing.sm,
     paddingVertical: Spacing.md,
     marginTop: Spacing.sm,
@@ -423,8 +473,8 @@ const styles = StyleSheet.create({
 
   // Pill Button
   pillButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -455,8 +505,8 @@ const styles = StyleSheet.create({
     ...Shadows.sm,
   },
   inlineHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.sm,
     marginBottom: 4,
   },
@@ -471,14 +521,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   quickGrid: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing.sm,
   },
   quickBtn: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 6,
     paddingVertical: 10,
     paddingHorizontal: 8,

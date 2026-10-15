@@ -1,16 +1,21 @@
+import { WorkerPortrait } from "./Brand";
 // ============================================================
 // CoopConnect – Card, Badge, Avatar, StarRating, LoadingSpinner,
 //               EmptyState, StatusBadge shared components
 // ============================================================
 
-import React from 'react';
+import { Button } from "@/components/common/Button";
+import { Colors, Radius, Shadows, Spacing, Typography } from "@/constants";
+import { Star } from "lucide-react-native";
+import React from "react";
 import {
-  View, Text, StyleSheet, ViewStyle, TextStyle, ActivityIndicator,
+  ActivityIndicator,
+  StyleSheet,
+  Text,
   TouchableOpacity,
-} from 'react-native';
-import { Star } from 'lucide-react-native';
-import { Colors, Radius, Shadows, Spacing, Typography } from '@/constants';
-import { Button } from '@/components/common/Button';
+  View,
+  ViewStyle,
+} from "react-native";
 
 // ─── Card ────────────────────────────────────────────────────
 
@@ -21,7 +26,12 @@ interface CardProps {
   onPress?: () => void;
 }
 
-export function Card({ children, style, padding = Spacing.base, onPress }: CardProps) {
+export function Card({
+  children,
+  style,
+  padding = Spacing.base,
+  onPress,
+}: CardProps) {
   if (onPress) {
     return (
       <TouchableOpacity
@@ -34,41 +44,37 @@ export function Card({ children, style, padding = Spacing.base, onPress }: CardP
     );
   }
 
-  return (
-    <View style={[styles.card, { padding }, style]}>
-      {children}
-    </View>
-  );
+  return <View style={[styles.card, { padding }, style]}>{children}</View>;
 }
 
 // ─── Badge ───────────────────────────────────────────────────
 
 type BadgeVariant =
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'danger'
-  | 'info'
-  | 'neutral';
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "error"
+  | "danger"
+  | "info"
+  | "neutral";
 
 interface BadgeProps {
   label: string;
   variant?: BadgeVariant;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   small?: boolean;
   style?: ViewStyle;
 }
 
 export function Badge({
   label,
-  variant = 'primary',
+  variant = "primary",
   size,
   small = false,
   style,
 }: BadgeProps) {
-  const isSmall = small || size === 'sm';
+  const isSmall = small || size === "sm";
 
   const bgColor: Record<BadgeVariant, string> = {
     primary: Colors.primaryLight,
@@ -131,29 +137,22 @@ export function Avatar({
   textColor,
   style,
 }: AvatarProps) {
-  const initials = (name || 'Worker')
-    .split(' ')
-    .filter(Boolean)
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
-
-  const hue = Array.from(name || 'Worker').reduce((acc, c) => acc + c.charCodeAt(0), 0) % 360;
-  const bg = backgroundColor ?? `hsl(${hue}, 45%, 35%)`;
-  const tc = textColor ?? Colors.textInverse;
-
+  const variant =
+    Array.from(name || "Worker").reduce((acc, c) => acc + c.charCodeAt(0), 0) %
+    4;
   return (
     <View
       style={[
-        styles.avatar,
-        { width: size, height: size, borderRadius: size / 2, backgroundColor: bg },
+        {
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          overflow: "hidden",
+        },
         style,
       ]}
     >
-      <Text style={[styles.avatarText, { fontSize: size * 0.37, color: tc }]}>
-        {initials}
-      </Text>
+      <WorkerPortrait size={size} variant={variant} />
     </View>
   );
 }
@@ -184,7 +183,7 @@ export function StarRating({
           key={i}
           size={size}
           color={i <= Math.round(rating) ? Colors.star : Colors.border}
-          fill={i <= Math.round(rating) ? Colors.star : 'transparent'}
+          fill={i <= Math.round(rating) ? Colors.star : "transparent"}
         />
       ))}
       {displayScore && (
@@ -246,7 +245,12 @@ export function EmptyState({
         <View style={styles.emptyAction}>{action}</View>
       ) : actionLabel && onAction ? (
         <View style={styles.emptyAction}>
-          <Button label={actionLabel} variant="primary" size="sm" onPress={onAction} />
+          <Button
+            label={actionLabel}
+            variant="primary"
+            size="sm"
+            onPress={onAction}
+          />
         </View>
       ) : null}
     </View>
@@ -280,6 +284,7 @@ export function Divider({ style }: { style?: ViewStyle }) {
 
 const styles = StyleSheet.create({
   card: {
+    minWidth: 0,
     backgroundColor: Colors.cardBackground,
     borderRadius: Radius.lg,
     borderWidth: 1,
@@ -287,10 +292,11 @@ const styles = StyleSheet.create({
     ...Shadows.sm,
   },
   badge: {
+    maxWidth: "100%",
     paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: Radius.full,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   badgeSmall: { paddingHorizontal: 6, paddingVertical: 2 },
   badgeText: {
@@ -299,15 +305,15 @@ const styles = StyleSheet.create({
   },
   badgeTextSmall: { fontSize: 10 },
   avatar: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   avatarText: {
     fontWeight: Typography.fontWeight.bold,
   },
   starRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 2,
   },
   ratingText: {
@@ -318,8 +324,8 @@ const styles = StyleSheet.create({
   },
   loadingWrap: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: Spacing.xxxl,
     gap: Spacing.md,
   },
@@ -329,8 +335,8 @@ const styles = StyleSheet.create({
   },
   emptyWrap: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: Spacing.xxxl,
     gap: Spacing.md,
   },
@@ -339,27 +345,27 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: 36,
     backgroundColor: Colors.surfaceSecondary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: Spacing.sm,
   },
   emptyTitle: {
     fontSize: Typography.fontSize.xl,
     fontWeight: Typography.fontWeight.bold,
     color: Colors.textPrimary,
-    textAlign: 'center',
+    textAlign: "center",
   },
   emptySubtitle: {
     fontSize: Typography.fontSize.md,
     color: Colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 22,
   },
   emptyAction: { marginTop: Spacing.sm },
   sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: Spacing.md,
   },
   sectionTitle: {

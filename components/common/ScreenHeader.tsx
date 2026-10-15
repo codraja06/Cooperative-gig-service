@@ -1,13 +1,19 @@
+import { useResponsiveLayout } from "./ResponsiveLayout";
 // ============================================================
 // CoopConnect – Screen Header Component
 // ============================================================
 
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
-import { useRouter } from 'expo-router';
-import { ArrowLeft } from 'lucide-react-native';
-import { Colors, Spacing, Typography } from '@/constants';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Colors, Spacing, Typography } from "@/constants";
+import { useRouter } from "expo-router";
+import { ArrowLeft } from "lucide-react-native";
+import React from "react";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
 
 interface ScreenHeaderProps {
   title: string;
@@ -19,37 +25,49 @@ interface ScreenHeaderProps {
 }
 
 export function ScreenHeader({
-  title, subtitle, showBack = false, right, style, transparent = false,
+  title,
+  subtitle,
+  showBack = false,
+  right,
+  style,
+  transparent = false,
 }: ScreenHeaderProps) {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const { isDesktop, isTablet } = useResponsiveLayout();
 
   return (
     <View
       style={[
         styles.container,
         !transparent && styles.solidBg,
-        { paddingTop: insets.top + Spacing.sm },
+        { paddingTop: Spacing.sm },
         style,
       ]}
     >
       <View style={styles.row}>
         {showBack && (
           <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
             style={styles.backButton}
-            onPress={() => router.back()}
+            onPress={() =>
+              router.canGoBack() ? router.back() : router.replace("/")
+            }
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <ArrowLeft size={22} color={transparent ? Colors.textInverse : Colors.textPrimary} />
+            <ArrowLeft
+              size={22}
+              color={transparent ? Colors.textInverse : Colors.textPrimary}
+            />
           </TouchableOpacity>
         )}
         <View style={styles.titleWrap}>
           <Text
             style={[
               styles.title,
+              { fontSize: isDesktop ? 22 : isTablet ? 20 : 18 },
               transparent && { color: Colors.textInverse },
             ]}
-            numberOfLines={1}
           >
             {title}
           </Text>
@@ -57,9 +75,8 @@ export function ScreenHeader({
             <Text
               style={[
                 styles.subtitle,
-                transparent && { color: 'rgba(255,255,255,0.8)' },
+                transparent && { color: "rgba(255,255,255,0.8)" },
               ]}
-              numberOfLines={1}
             >
               {subtitle}
             </Text>
@@ -82,12 +99,12 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.sm,
   },
   backButton: {
-    padding: 4,
+    padding: 10,
   },
   titleWrap: { flex: 1 },
   title: {

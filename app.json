@@ -18,7 +18,7 @@
         "backgroundColor": "#163A5F"
       },
       "package": "com.coopconnect.app",
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "resize"
     },
     "web": {
       "bundler": "metro",

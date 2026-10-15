@@ -2,13 +2,18 @@
 // CoopConnect – Reusable Input Component
 // ============================================================
 
-import React, { useState } from 'react';
+import { Colors, Radius, Spacing, Typography } from "@/constants";
+import { Eye, EyeOff } from "lucide-react-native";
+import React, { useState } from "react";
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet,
-  TextInputProps, ViewStyle,
-} from 'react-native';
-import { Eye, EyeOff } from 'lucide-react-native';
-import { Colors, Radius, Spacing, Typography } from '@/constants';
+  StyleSheet,
+  Text,
+  TextInput,
+  TextInputProps,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -19,7 +24,16 @@ interface InputProps extends TextInputProps {
 }
 
 export function Input({
-  label, error, hint, leftIcon, containerStyle, secureTextEntry, style, ...rest
+  label,
+  error,
+  hint,
+  leftIcon,
+  containerStyle,
+  secureTextEntry,
+  onFocus,
+  onBlur,
+  style,
+  ...rest
 }: InputProps) {
   const [focused, setFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -37,21 +51,38 @@ export function Input({
       >
         {leftIcon && <View style={styles.leftIconWrap}>{leftIcon}</View>}
         <TextInput
-          style={[styles.input, leftIcon ? styles.inputWithLeftIcon : undefined, style]}
+          style={[
+            styles.input,
+            leftIcon ? styles.inputWithLeftIcon : undefined,
+            style,
+          ]}
+          accessibilityLabel={label}
           placeholderTextColor={Colors.textMuted}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onFocus={(event) => {
+            setFocused(true);
+            onFocus?.(event);
+          }}
+          onBlur={(event) => {
+            setFocused(false);
+            onBlur?.(event);
+          }}
           secureTextEntry={isPassword && !showPassword}
           {...rest}
         />
         {isPassword && (
           <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel={
+              showPassword ? "Hide password" : "Show password"
+            }
             style={styles.eyeButton}
             onPress={() => setShowPassword((p) => !p)}
           >
-            {showPassword
-              ? <EyeOff size={18} color={Colors.textSecondary} />
-              : <Eye size={18} color={Colors.textSecondary} />}
+            {showPassword ? (
+              <EyeOff size={18} color={Colors.textSecondary} />
+            ) : (
+              <Eye size={18} color={Colors.textSecondary} />
+            )}
           </TouchableOpacity>
         )}
       </View>
@@ -70,8 +101,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   inputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: Colors.cardBackground,
     borderWidth: 1.5,
     borderColor: Colors.border,
